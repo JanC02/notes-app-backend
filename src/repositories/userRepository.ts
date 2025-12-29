@@ -9,7 +9,7 @@ export async function create(userData: CreateUser): Promise<UserResponse> {
     return res.rows[0];
 }
 
-export async function getByEmail(email: string): Promise<User> {
+export async function getByEmail(email: string): Promise<User | undefined> {
     const res = await pool.query(
         'SELECT * FROM users WHERE email=$1',
         [email]
