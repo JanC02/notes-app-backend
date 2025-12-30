@@ -1,5 +1,5 @@
 import { pool } from "../config/db.js";
-import type { User, CreateUser, UserResponse } from "../types/user.js";
+import type { User, CreateUser, UserResponse, UserId } from "../types/user.js";
 
 export async function create(userData: CreateUser): Promise<UserResponse> {
     const res = await pool.query(
@@ -15,4 +15,11 @@ export async function getByEmail(email: string): Promise<User | null> {
         [email]
     );
     return res.rows[0] || null;
+}
+
+export async function deleteById(id: UserId) {
+    await pool.query(
+        'DELETE FROM users WHERE id=$1',
+        [id]
+    );
 }
