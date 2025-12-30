@@ -4,7 +4,7 @@ import type { TokenPayload, TokenResult } from "../types/auth.js";
 import { getEnv } from "./getEnv.js";
 
 function generateToken(payload: TokenPayload, secret: string): string {
-    return jwt.sign(payload, secret);
+    return jwt.sign(payload, secret, { algorithm: 'HS256' });
 }
 
 export function generateAccessToken(userData: UserResponse): TokenResult {
@@ -49,7 +49,7 @@ export function generateRefreshToken(userData: UserResponse): TokenResult {
 
 function verifyToken(token: string, secret: string): TokenPayload | null {
     try {
-        const result = jwt.verify(token, secret) as TokenPayload;
+        const result = jwt.verify(token, secret, { algorithms: ['HS256'] }) as TokenPayload;
         return result;
     } catch(error) {
         console.error(error);
