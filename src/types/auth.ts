@@ -26,7 +26,7 @@ export type TokenSave = {
 };
 
 export type TokenFetch = {
-    accessToken: string;
+    refreshToken: string;
 };
 
 export type RefreshResult = {
