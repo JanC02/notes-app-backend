@@ -70,13 +70,30 @@ export async function refresh(refreshToken: string): Promise<RefreshResult> {
     const tokenInDb = await tokenRepository.getByToken(refreshToken);
 
     if (!tokenInDb) {
+        await tokenRepository.deleteAllByUserId(payload.id);
         throw new InvalidTokenError();
     }
 
-    const newAccessToken = generateAccessToken({
+    const newAccessTokenResult = generateAccessToken({
         id: payload.id,
         email: payload.email
     });
 
-    return { accessToken: newAccessToken.token };
+    const newRefreshTokenResult = generateRefreshToken({
+        id: payload.id,
+        email: payload.email
+    });
+
+    await tokenRepository.deleteByToken(refreshToken);
+    await tokenRepository.save({
+        userId: payload.id,
+        token: newRefreshTokenResult.token,
+        iat: new Date(newRefreshTokenResult.tokenPayload.iat * 1000),
+        exp: new Date(newRefreshTokenResult.tokenPayload.exp * 1000)
+    });
+
+    return { 
+        accessToken: newAccessTokenResult.token, 
+        refreshToken: newRefreshTokenResult.token
+    };
 }

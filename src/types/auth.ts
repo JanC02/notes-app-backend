@@ -2,7 +2,7 @@ import type { UserId } from "./user.js";
 import * as z from "zod";
 
 export type TokenPayload = {
-    id: number;
+    id: UserId;
     email: string;
     iat: number;
     exp: number;
@@ -31,6 +31,7 @@ export type TokenFetch = {
 
 export type RefreshResult = {
     accessToken: string;
+    refreshToken: string;
 };
 
 export const logoutSchema = z.object({

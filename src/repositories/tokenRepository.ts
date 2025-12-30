@@ -1,5 +1,6 @@
 import { pool } from "../config/db.js";
 import type { TokenSave, TokenFetch } from "../types/auth.js";
+import type { UserId } from "../types/user.js";
 
 export async function save(tokenData: TokenSave) {
     await pool.query(
@@ -21,4 +22,11 @@ export async function getByToken(refreshToken: string): Promise<TokenFetch | nul
         [refreshToken]
     );
     return result.rows[0] || null;
+}
+
+export async function deleteAllByUserId(userId: UserId) {
+    await pool.query(
+        'DELETE FROM refresh_tokens WHERE user_id=$1',
+        [userId]
+    );
 }
