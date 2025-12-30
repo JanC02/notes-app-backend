@@ -1,8 +1,12 @@
-import type { Request, Response } from "express";
-import { ApiError } from "../types/ApiError.js";
+import type { Request, Response, NextFunction } from "express";
+import { ApiError } from "../types/errors/ApiError.js";
+import { DomainError } from "../types/errors/DomainError.js";
 
-export function errorHandler(error: Error, req: Request, res: Response) {
+// eslint-disable-next-line
+export function errorHandler(error: Error, req: Request, res: Response, _next: NextFunction ) {
     if (error instanceof ApiError) {
+        return res.status(error.statusCode).json({ message: error.message });
+    } else if (error instanceof DomainError) {
         return res.status(error.statusCode).json({ message: error.message });
     }
 
