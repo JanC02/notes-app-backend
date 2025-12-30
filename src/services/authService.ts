@@ -54,3 +54,7 @@ export async function login(loginData: LoginUser): Promise<AuthResponse> {
         refreshToken: refreshTokenResult.token
     };
 };
+
+export async function logout(token: string) {
+    await tokenRepository.deleteByToken(token);
+}

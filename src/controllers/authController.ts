@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import { ApiError } from "../types/errors/ApiError.js";
 import { registerUserSchema, loginUserSchema } from "../types/user.js";
+import { logoutSchema } from "../types/auth.js";
 import * as authService from "../services/authService.js";
 
 export async function register(req: Request, res: Response) {
@@ -23,4 +24,15 @@ export async function login(req: Request, res: Response) {
 
     const result = await authService.login(parseResult.data);
     res.status(200).json(result);
+}
+
+export async function logout(req: Request, res: Response) {
+    const parseResult = logoutSchema.safeParse(req.body);
+
+    if (!parseResult.success) {
+        throw new ApiError(400, 'Token is required');
+    }
+
+    await authService.logout(parseResult.data.refreshToken);
+    res.sendStatus(204);
 }

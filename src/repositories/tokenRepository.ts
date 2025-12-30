@@ -7,3 +7,10 @@ export async function save(tokenData: TokenSave) {
         [tokenData.userId, tokenData.token, tokenData.iat, tokenData.exp]
     );
 }
+
+export async function deleteByToken(token: string) {
+    await pool.query(
+        'DELETE FROM refresh_tokens WHERE refresh_token=$1',
+        [token]
+    );
+}

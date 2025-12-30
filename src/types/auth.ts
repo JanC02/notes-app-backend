@@ -1,4 +1,5 @@
 import type { UserId } from "./user.js";
+import * as z from "zod";
 
 export type TokenPayload = {
     id: number;
@@ -23,3 +24,7 @@ export type TokenSave = {
     iat: Date;
     exp: Date;
 };
+
+export const logoutSchema = z.object({
+    refreshToken: z.string()
+});
