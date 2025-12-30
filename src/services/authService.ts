@@ -51,6 +51,8 @@ export async function login(loginData: LoginUser): Promise<AuthResponse> {
     });
 
     return {
+        id: fetchedUser.id,
+        email: fetchedUser.email,
         accessToken: accessTokenResult.token,
         refreshToken: refreshTokenResult.token
     };
