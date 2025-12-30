@@ -9,6 +9,8 @@ export type TokenPayload = {
 };
 
 export type AuthResponse = {
+    id: UserId;
+    email: string;
     accessToken: string;
     refreshToken: string;
 };
