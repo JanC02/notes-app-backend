@@ -25,6 +25,16 @@ export type TokenSave = {
     exp: Date;
 };
 
+export type TokenFetch = {
+    accessToken: string;
+};
+
+export type RefreshResult = {
+    accessToken: string;
+};
+
 export const logoutSchema = z.object({
     refreshToken: z.string()
 });
+
+export const refreshSchema = z.clone(logoutSchema);
