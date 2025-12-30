@@ -9,10 +9,10 @@ export async function create(userData: CreateUser): Promise<UserResponse> {
     return res.rows[0];
 }
 
-export async function getByEmail(email: string): Promise<User | undefined> {
+export async function getByEmail(email: string): Promise<User | null> {
     const res = await pool.query(
         'SELECT id, email, password_hash as "passwordHash" FROM users WHERE email=$1',
         [email]
     );
-    return res.rows[0];
+    return res.rows[0] || null;
 }
