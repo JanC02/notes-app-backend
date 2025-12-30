@@ -11,7 +11,7 @@ export async function create(userData: CreateUser): Promise<UserResponse> {
 
 export async function getByEmail(email: string): Promise<User | undefined> {
     const res = await pool.query(
-        'SELECT * FROM users WHERE email=$1',
+        'SELECT id, email, password_hash as "passwordHash" FROM users WHERE email=$1',
         [email]
     );
     return res.rows[0];
