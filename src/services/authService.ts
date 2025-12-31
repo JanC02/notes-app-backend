@@ -43,6 +43,8 @@ export async function login(loginData: LoginUser): Promise<AuthResponse> {
     const accessTokenResult = generateAccessToken(userData);
     const refreshTokenResult = generateRefreshToken(userData);
 
+    await tokenRepository.deleteExpiredByUserId(fetchedUser.id);
+
     await tokenRepository.save({
         userId: fetchedUser.id,
         token: refreshTokenResult.token,
