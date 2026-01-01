@@ -16,6 +16,7 @@ export type NoteAdd = {
 };
 
 export type NoteResponse = Omit<Note, 'userId' | 'content'>;
+export type NoteId = Note['id'];
 
 export const addNoteSchema = z.object({
     title: z.string().min(5),

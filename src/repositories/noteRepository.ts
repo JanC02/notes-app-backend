@@ -1,5 +1,5 @@
 import { pool } from "../config/db.js";
-import type { NoteAdd, NoteResponse } from "../types/note.js";
+import type { Note, NoteId, NoteAdd, NoteResponse } from "../types/note.js";
 import type { UserId } from "../types/user.js";
 
 export async function createNote(noteData: NoteAdd): Promise<NoteResponse> {
@@ -17,3 +17,11 @@ export async function getAllByUserId(userId: UserId): Promise<NoteResponse[]> {
     );
     return result.rows;
 };
+
+export async function getByIdAndUserId(noteId: NoteId, userId: UserId): Promise<Note | undefined> {
+    const result = await pool.query(
+        'SELECT id, user_id as "userId", title, content, created_at as "createdAt" FROM NOTES WHERE id=$1 AND user_id=$2',
+        [noteId, userId]
+    );
+    return result.rows[0];
+}

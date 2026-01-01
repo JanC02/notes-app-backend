@@ -24,3 +24,15 @@ export async function getAll(req: Request, res: Response) {
 
     res.json(result);
 }
+
+export async function get(req: Request, res: Response) {
+    const noteId = Number(req.params.noteId);
+
+    if (isNaN(noteId)) {
+        throw new ApiError(400, 'Invalid note id');
+    }
+
+    const result = await noteService.getNote(noteId, req.user!.id);
+
+    res.json(result);
+}
