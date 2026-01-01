@@ -18,12 +18,12 @@ export async function getAllByUserId(userId: UserId): Promise<NoteResponse[]> {
     return result.rows;
 };
 
-export async function getByIdAndUserId(noteId: NoteId, userId: UserId): Promise<Note | undefined> {
+export async function getByIdAndUserId(noteId: NoteId, userId: UserId): Promise<Note | null> {
     const result = await pool.query(
         'SELECT id, user_id as "userId", title, content, created_at as "createdAt" FROM NOTES WHERE id=$1 AND user_id=$2',
         [noteId, userId]
     );
-    return result.rows[0];
+    return result.rows[0] || null;
 };
 
 export async function editNote(noteData: NoteEdit): Promise<boolean> {
