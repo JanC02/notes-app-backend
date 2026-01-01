@@ -18,7 +18,16 @@ export type NoteAdd = {
 export type NoteResponse = Omit<Note, 'userId' | 'content'>;
 export type NoteId = Note['id'];
 
+export type NoteEdit = {
+    id: NoteId;
+    userId: UserId;
+    title: string;
+    content: string;
+};
+
 export const addNoteSchema = z.object({
     title: z.string().min(5),
     content: z.string().min(5)
 });
+
+export const editNoteSchema = z.clone(addNoteSchema);

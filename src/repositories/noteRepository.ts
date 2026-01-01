@@ -1,5 +1,5 @@
 import { pool } from "../config/db.js";
-import type { Note, NoteId, NoteAdd, NoteResponse } from "../types/note.js";
+import type { Note, NoteId, NoteAdd, NoteResponse, NoteEdit } from "../types/note.js";
 import type { UserId } from "../types/user.js";
 
 export async function createNote(noteData: NoteAdd): Promise<NoteResponse> {
@@ -24,4 +24,13 @@ export async function getByIdAndUserId(noteId: NoteId, userId: UserId): Promise<
         [noteId, userId]
     );
     return result.rows[0];
+};
+
+export async function editNote(noteData: NoteEdit): Promise<boolean> {
+    const result = await pool.query(
+        'UPDATE notes SET title=$1, content=$2 WHERE id=$3 AND user_id=$4',
+        [noteData.title, noteData.content, noteData.id, noteData.userId]
+    );
+
+    return result.rowCount! > 0;
 }

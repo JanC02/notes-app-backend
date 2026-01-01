@@ -1,4 +1,4 @@
-import type { NoteAdd, NoteId } from "../types/note.js";
+import type { NoteAdd, NoteId, NoteEdit } from "../types/note.js";
 import type { UserId } from "../types/user.js";
 import * as noteRepository from "../repositories/noteRepository.js";
 import { NoteNotFoundError } from "../types/errors/NoteNotFoundError.js";
@@ -21,4 +21,12 @@ export async function getNote(noteId: NoteId, userId: UserId) {
     }
 
     return result;
+}
+
+export async function editNote(noteData: NoteEdit) {
+    const updated = await noteRepository.editNote(noteData);
+
+    if (!updated) {
+        throw new NoteNotFoundError();
+    }
 }
