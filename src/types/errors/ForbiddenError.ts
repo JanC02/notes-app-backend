@@ -4,6 +4,6 @@ export class ForbiddenError extends DomainError {
     readonly statusCode = 403;
 
     constructor() {
-        super('Forbidden')
+        super('Forbidden');
     }
 }
