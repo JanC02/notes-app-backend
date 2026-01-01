@@ -30,3 +30,11 @@ export async function editNote(noteData: NoteEdit) {
         throw new NoteNotFoundError();
     }
 }
+
+export async function deleteNote(noteId: NoteId, userId: UserId) {
+    const deleted = await noteRepository.deleteNote(noteId, userId);
+
+    if (!deleted) {
+        throw new NoteNotFoundError();
+    }
+}

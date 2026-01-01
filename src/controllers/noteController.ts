@@ -59,3 +59,15 @@ export async function edit(req: Request, res: Response) {
 
     res.sendStatus(204);
 }
+
+export async function deleteNote(req: Request, res: Response) {
+    const noteId = Number(req.params.noteId);
+
+    if (isNaN(noteId)) {
+        throw new ApiError(400, 'Invalid note id');
+    }
+
+    await noteService.deleteNote(noteId, req.user!.id);
+
+    res.sendStatus(204);
+}

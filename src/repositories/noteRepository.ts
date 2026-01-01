@@ -34,3 +34,11 @@ export async function editNote(noteData: NoteEdit): Promise<boolean> {
 
     return result.rowCount! > 0;
 }
+
+export async function deleteNote(noteId: NoteId, userId: UserId): Promise<boolean> {
+    const result = await pool.query(
+        'DELETE FROM notes WHERE id = $1 AND user_id = $2',
+        [noteId, userId]
+    );
+    return result.rowCount! > 0;
+}
