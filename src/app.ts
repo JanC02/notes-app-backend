@@ -5,6 +5,7 @@ import { errorHandler } from "./middlewares/errorHandler.js";
 import { auth } from "./middlewares/auth.js";
 import { authRouter } from "./routes/auth.js";
 import { usersRouter } from "./routes/users.js";
+import { notesRouter } from "./routes/notes.js";
 
 const app = express();
 
@@ -13,10 +14,7 @@ app.use(express.json());
 
 app.use('/auth', authRouter);
 app.use('/users', auth, usersRouter);
-
-app.get('/', (req, res) => {
-    res.json({message: 'Hello World!'});
-});
+app.use('/notes', auth, notesRouter);
 
 app.use(errorHandler);
 
