@@ -18,3 +18,9 @@ export async function add(req: Request, res: Response) {
 
     res.status(201).json(result);
 }
+
+export async function getAll(req: Request, res: Response) {
+    const result = await noteService.getAllNotes(req.user!.id);
+
+    res.json(result);
+}
