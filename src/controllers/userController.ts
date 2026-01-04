@@ -6,3 +6,9 @@ export async function deleteUser(req: Request, res: Response) {
 
     res.sendStatus(204);
 };
+
+export async function fetchUserData(req: Request, res: Response) {
+    const result = await userService.fetchUserData(req.user!.email);
+
+    res.json(result);
+}
