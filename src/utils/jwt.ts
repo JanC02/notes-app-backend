@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 import type { UserResponse } from "../types/user.js";
 import type { TokenPayload, TokenResult } from "../types/auth.js";
 import { getEnv } from "./getEnv.js";
+import { appConfig } from "../config/config.js";
 
 function generateToken(payload: TokenPayload, secret: string): string {
     return jwt.sign(payload, secret, { algorithm: 'HS256' });
@@ -10,7 +11,7 @@ function generateToken(payload: TokenPayload, secret: string): string {
 export function generateAccessToken(userData: UserResponse): TokenResult {
     const now = Date.now();
     const iat = Math.floor(now / 1000);
-    const exp = iat + 15 * 60;
+    const exp = iat + appConfig.jwt.accessTokenExpiry;
 
     const payload = {
         id: userData.id,
@@ -30,7 +31,7 @@ export function generateAccessToken(userData: UserResponse): TokenResult {
 export function generateRefreshToken(userData: UserResponse): TokenResult {
     const now = Date.now();
     const iat = Math.floor(now / 1000);
-    const exp = iat + 7 * 24 * 60 * 60;
+    const exp = iat + appConfig.jwt.refreshTokenExpiry;
 
     const payload = {
         id: userData.id,

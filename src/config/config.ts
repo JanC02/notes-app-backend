@@ -12,5 +12,9 @@ export const appConfig = {
         host: getEnv('DB_HOST'),
         port: Number(getEnv('DB_PORT')),
         database: getEnv('DB_DATABASE')
+    },
+    jwt: {
+        accessTokenExpiry: 15 * 60,
+        refreshTokenExpiry: 7 * 24 * 60 * 60
     }
 } as const;
