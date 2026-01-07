@@ -1,7 +1,6 @@
 import jwt from "jsonwebtoken";
 import type { UserResponse } from "../types/user.js";
 import type { TokenPayload, TokenResult } from "../types/auth.js";
-import { getEnv } from "./getEnv.js";
 import { appConfig } from "../config/config.js";
 
 function generateToken(payload: TokenPayload, secret: string): string {
@@ -59,9 +58,9 @@ function verifyToken(token: string, secret: string): TokenPayload | null {
 }
 
 export function verifyAccessToken(token: string): TokenPayload | null {
-    return verifyToken(token, getEnv('ACCESS_TOKEN_SECRET'));
+    return verifyToken(token, appConfig.jwt.accessTokenSecret);
 }
 
 export function verifyRefreshToken(token: string): TokenPayload | null {
-    return verifyToken(token, getEnv('REFRESH_TOKEN_SECRET'));
+    return verifyToken(token, appConfig.jwt.refreshTokenSecret);
 }
