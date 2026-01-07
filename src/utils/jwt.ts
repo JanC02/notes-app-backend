@@ -20,7 +20,7 @@ export function generateAccessToken(userData: UserResponse): TokenResult {
         exp
     };
 
-    const token = generateToken(payload, getEnv('ACCESS_TOKEN_SECRET'));
+    const token = generateToken(payload, appConfig.jwt.accessTokenSecret);
 
     return {
         token,
@@ -40,7 +40,7 @@ export function generateRefreshToken(userData: UserResponse): TokenResult {
         exp
     };
 
-    const token = generateToken(payload, getEnv('REFRESH_TOKEN_SECRET'));
+    const token = generateToken(payload, appConfig.jwt.refreshTokenSecret);
 
     return {
         token,
