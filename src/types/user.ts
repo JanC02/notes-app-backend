@@ -7,7 +7,7 @@ export type User = {
 };
 
 export const registerUserSchema = z.object({
-    email: z.email(),
+    email: z.email().max(255),
     password: z.string().min(8)
 });
 
