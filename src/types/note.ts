@@ -6,7 +6,7 @@ export type Note = {
     userId: UserId;
     title: string;
     content: string;
-    createdAt: Date;
+    createdAt: string;
 };
 
 export type NoteAdd = {
