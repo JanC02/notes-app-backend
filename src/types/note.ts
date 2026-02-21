@@ -7,6 +7,7 @@ export type Note = {
     title: string;
     content: string;
     createdAt: string;
+    isFavorite: boolean;
 };
 
 export type NoteAdd = {
@@ -31,3 +32,7 @@ export const addNoteSchema = z.object({
 });
 
 export const editNoteSchema = z.clone(addNoteSchema);
+
+export const setIsFavoriteNoteSchema = z.object({
+    isFavorite: z.boolean(),
+})

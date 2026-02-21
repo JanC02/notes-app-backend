@@ -38,3 +38,11 @@ export async function deleteNote(noteId: NoteId, userId: UserId) {
         throw new NoteNotFoundError();
     }
 }
+
+export async function setIsFavoriteNote(noteId: NoteId, userId: UserId, isFavorite: boolean) {
+    const result = await noteRepository.setIsFavoriteNote(isFavorite, noteId, userId);
+
+    if (!result) {
+        throw new NoteNotFoundError();
+    }
+}

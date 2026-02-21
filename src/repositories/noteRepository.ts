@@ -4,7 +4,7 @@ import type { UserId } from "../types/user.js";
 
 export async function createNote(noteData: NoteAdd): Promise<NoteResponse> {
     const result = await pool.query(
-        'INSERT INTO notes(user_id, title, content, created_at) values ($1, $2, $3, NOW()) RETURNING id, title, created_at as "createdAt"',
+        'INSERT INTO notes(user_id, title, content, created_at) values ($1, $2, $3, NOW()) RETURNING id, title, created_at as "createdAt", is_favorite as "isFavorite"',
         [noteData.userId, noteData.title, noteData.content]
     );
     return result.rows[0];
@@ -12,7 +12,7 @@ export async function createNote(noteData: NoteAdd): Promise<NoteResponse> {
 
 export async function getAllByUserId(userId: UserId): Promise<NoteResponse[]> {
     const result = await pool.query(
-        'SELECT id, title, created_at as "createdAt" FROM NOTES WHERE user_id=$1',
+        'SELECT id, title, created_at as "createdAt", is_favorite as "isFavorite" FROM NOTES WHERE user_id=$1',
         [userId]
     );
     return result.rows;
@@ -20,7 +20,7 @@ export async function getAllByUserId(userId: UserId): Promise<NoteResponse[]> {
 
 export async function getByIdAndUserId(noteId: NoteId, userId: UserId): Promise<Note | null> {
     const result = await pool.query(
-        'SELECT id, user_id as "userId", title, content, created_at as "createdAt" FROM NOTES WHERE id=$1 AND user_id=$2',
+        'SELECT id, user_id as "userId", title, content, created_at as "createdAt",  is_favorite as "isFavorite" FROM NOTES WHERE id=$1 AND user_id=$2',
         [noteId, userId]
     );
     return result.rows[0] || null;
@@ -39,6 +39,14 @@ export async function deleteNote(noteId: NoteId, userId: UserId): Promise<boolea
     const result = await pool.query(
         'DELETE FROM notes WHERE id = $1 AND user_id = $2',
         [noteId, userId]
+    );
+    return result.rowCount! > 0;
+}
+
+export async function setIsFavoriteNote(isFavorite: boolean, noteId: NoteId, userId: UserId): Promise<boolean> {
+    const result = await pool.query(
+        'UPDATE notes SET is_favorite=$1 WHERE id=$2 AND user_id=$3',
+        [isFavorite, noteId, userId]
     );
     return result.rowCount! > 0;
 }
