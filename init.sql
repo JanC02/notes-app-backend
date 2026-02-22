@@ -9,7 +9,8 @@ CREATE TABLE notes (
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     title VARCHAR(255) NOT NULL,
     content TEXT NOT NULL,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    is_favorite BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 CREATE TABLE refresh_tokens (
