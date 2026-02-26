@@ -1,4 +1,5 @@
-import type { NoteAdd, NoteId, NoteEdit } from "../types/note.js";
+import type { NoteAdd, NoteId, NoteEdit, PaginatedNotes } from "../types/note.js";
+import { appConfig } from "../config/config.js";
 import type { UserId } from "../types/user.js";
 import * as noteRepository from "../repositories/noteRepository.js";
 import { NoteNotFoundError } from "../types/errors/NoteNotFoundError.js";
@@ -8,9 +9,13 @@ export async function createNote(noteData: NoteAdd) {
     return result;
 };
 
-export async function getAllNotes(userId: UserId) {
-    const result = await noteRepository.getAllByUserId(userId);
-    return result;
+export async function getAllNotes(userId: UserId, page: number): Promise<PaginatedNotes> {
+    const { notes, totalCount } = await noteRepository.getAllByUserId(userId, page);
+
+    return {
+        notes,
+        totalPages: Math.ceil(totalCount / appConfig.pagination.pageSize),
+    };
 };
 
 export async function getNote(noteId: NoteId, userId: UserId) {

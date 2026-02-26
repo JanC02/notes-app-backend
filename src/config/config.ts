@@ -13,6 +13,9 @@ export const appConfig = {
         port: Number(getEnv('DB_PORT')),
         database: getEnv('DB_DATABASE')
     },
+    pagination: {
+        pageSize: 20,
+    },
     jwt: {
         accessTokenExpiry: 15 * 60,
         refreshTokenExpiry: 7 * 24 * 60 * 60,

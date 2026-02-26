@@ -20,7 +20,13 @@ export async function add(req: Request, res: Response) {
 }
 
 export async function getAll(req: Request, res: Response) {
-    const result = await noteService.getAllNotes(req.user!.id);
+    const page = Number(req.query.page) || 1;
+
+    if (page < 1 || !Number.isInteger(page)) {
+        throw new ApiError(400, 'Invalid page number');
+    }
+
+    const result = await noteService.getAllNotes(req.user!.id, page);
 
     res.json(result);
 }
