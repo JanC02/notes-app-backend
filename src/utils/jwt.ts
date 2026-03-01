@@ -52,7 +52,7 @@ function verifyToken(token: string, secret: string): TokenPayload | null {
         const result = jwt.verify(token, secret, { algorithms: ['HS256'] }) as TokenPayload;
         return result;
     } catch(error) {
-        console.error(error);
+        // console.error(error);
         return null;
     }
 }
