@@ -1,5 +1,6 @@
 import { pool } from "../config/db.js";
 import type { Note, NoteId, NoteAdd, NoteResponse, NoteEdit } from "../types/note.js";
+import { appConfig } from "../config/config.js";
 import type { UserId } from "../types/user.js";
 
 export async function createNote(noteData: NoteAdd): Promise<NoteResponse> {
@@ -10,12 +11,24 @@ export async function createNote(noteData: NoteAdd): Promise<NoteResponse> {
     return result.rows[0];
 };
 
-export async function getAllByUserId(userId: UserId): Promise<NoteResponse[]> {
-    const result = await pool.query(
-        'SELECT id, title, created_at as "createdAt", is_favorite as "isFavorite" FROM NOTES WHERE user_id=$1',
-        [userId]
-    );
-    return result.rows;
+export async function getAllByUserId(userId: UserId, page: number): Promise<{ notes: NoteResponse[]; totalCount: number }> {
+    const offset = (page - 1) * appConfig.pagination.pageSize;
+
+    const [notesResult, countResult] = await Promise.all([
+        pool.query(
+            'SELECT id, title, created_at as "createdAt", is_favorite as "isFavorite" FROM notes WHERE user_id=$1 ORDER BY created_at DESC LIMIT $2 OFFSET $3',
+            [userId, appConfig.pagination.pageSize, offset]
+        ),
+        pool.query(
+            'SELECT COUNT(*) FROM notes WHERE user_id=$1',
+            [userId]
+        ),
+    ]);
+
+    return {
+        notes: notesResult.rows,
+        totalCount: Number(countResult.rows[0].count),
+    };
 };
 
 export async function getByIdAndUserId(noteId: NoteId, userId: UserId): Promise<Note | null> {

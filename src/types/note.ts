@@ -35,4 +35,9 @@ export const editNoteSchema = z.clone(addNoteSchema);
 
 export const setIsFavoriteNoteSchema = z.object({
     isFavorite: z.boolean(),
-})
+});
+
+export type PaginatedNotes = {
+    notes: NoteResponse[];
+    totalPages: number;
+};
