@@ -27,8 +27,8 @@ export type NoteEdit = {
 };
 
 export const addNoteSchema = z.object({
-    title: z.string().min(5).max(255),
-    content: z.string().min(5).max(10000)
+    title: z.string().min(1).max(255),
+    content: z.string().min(1).max(10000)
 });
 
 export const editNoteSchema = z.clone(addNoteSchema);
