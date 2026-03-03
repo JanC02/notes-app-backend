@@ -16,7 +16,7 @@ export async function getAllByUserId(userId: UserId, page: number): Promise<{ no
 
     const [notesResult, countResult] = await Promise.all([
         pool.query(
-            'SELECT id, title, created_at as "createdAt", is_favorite as "isFavorite" FROM notes WHERE user_id=$1 ORDER BY created_at DESC LIMIT $2 OFFSET $3',
+            'SELECT id, title, created_at as "createdAt", is_favorite as "isFavorite" FROM notes WHERE user_id=$1 ORDER BY is_favorite DESC, created_at DESC LIMIT $2 OFFSET $3',
             [userId, appConfig.pagination.pageSize, offset]
         ),
         pool.query(
