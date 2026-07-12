@@ -83,27 +83,54 @@ init.sql                  # Database schema (users, notes, refresh_tokens)
 
 ## Setup
 
+This app is checked out as a subdirectory of [notes-app-infra](../README.md) (a separate git repository) and is normally run via Docker Compose from that repository's root, not standalone.
+
+### Running via Docker (recommended)
+
+From the `notes-app-infra` repository root:
+
+```bash
+docker compose up --build            # dev: tsx watch, hot reload, target: dev
+docker compose -f docker-compose.prod.yml up -d --build   # prod: compiled dist/, target: prod
+```
+
+The `Dockerfile` is multi-stage (`dev` / `build` / `prod`). The `prod` stage runs `npm ci --omit=dev` and starts the compiled output with `node dist/app.js` — no TypeScript tooling or dev dependencies end up in that image.
+
+Create a `.env` file in this directory before starting (not committed to git) — copy [`.env.example`](.env.example) and fill in your values:
+```bash
+cp .env.example .env
+```
+```
+PORT=3000
+CORS_ORIGIN=http://localhost:5173   # frontend origin — nginx on :80 in prod, vite on :5173 in dev
+DB_USER=your_db_user
+DB_PASSWORD=your_db_password
+DB_HOST=notes-app-db                # Docker Compose service name, not localhost
+DB_PORT=5432
+DB_DATABASE=notes_app
+ACCESS_TOKEN_SECRET=your_access_secret
+REFRESH_TOKEN_SECRET=your_refresh_secret
+```
+
+Generate strong random secrets instead of typing your own, e.g.:
+```bash
+node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
+```
+
+`init.sql` is mounted into the Postgres container automatically (`docker-entrypoint-initdb.d`) — no manual `psql` step needed when running via Docker.
+
+### Manual installation (outside Docker)
+
 1. Install dependencies:
    ```
    npm install
    ```
 
-2. Create a `.env` file:
-   ```
-   PORT=3000
-   CORS_ORIGIN=http://localhost:5173
-   DB_USER=your_db_user
-   DB_PASSWORD=your_db_password
-   DB_HOST=localhost
-   DB_PORT=5432
-   DB_DATABASE=note_app
-   ACCESS_TOKEN_SECRET=your_access_secret
-   REFRESH_TOKEN_SECRET=your_refresh_secret
-   ```
+2. Create a `.env` file as above, but set `DB_HOST=localhost` (or wherever Postgres is actually listening — the `notes-app-db` service name only resolves inside the Docker network).
 
 3. Initialize the database:
    ```
-   psql -d note_app -f init.sql
+   psql -d notes_app -f init.sql
    ```
 
 4. Run in development:
