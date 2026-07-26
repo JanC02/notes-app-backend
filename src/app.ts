@@ -12,6 +12,7 @@ const app = express();
 
 app.use(cors);
 app.use(express.json());
+app.set("trust proxy", 1);
 app.use(globalRateLimit);
 
 app.use('/auth', authRateLimit, authRouter);
