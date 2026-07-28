@@ -7,6 +7,7 @@ import { InvalidCredentialsError } from "../types/errors/InvalidCredentialsError
 import { InvalidTokenError } from "../types/errors/InvalidTokenError.js";
 import type { AuthResponse, RefreshResult } from "../types/auth.js";
 import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from "../utils/jwt.js";
+import { hashToken } from "../utils/hash.js";
 
 export async function register(userData: RegisterUser): Promise<UserResponse> {
     const exists = await userRepository.getByEmail(userData.email);
@@ -47,7 +48,7 @@ export async function login(loginData: LoginUser): Promise<AuthResponse> {
 
     await tokenRepository.save({
         userId: fetchedUser.id,
-        token: refreshTokenResult.token,
+        tokenHash: hashToken(refreshTokenResult.token),
         iat: new Date(refreshTokenResult.tokenPayload.iat * 1000),
         exp: new Date(refreshTokenResult.tokenPayload.exp * 1000)
     });
@@ -61,7 +62,7 @@ export async function login(loginData: LoginUser): Promise<AuthResponse> {
 };
 
 export async function logout(refreshToken: string) {
-    await tokenRepository.deleteByToken(refreshToken);
+    await tokenRepository.deleteByTokenHash(hashToken(refreshToken));
 }
 
 export async function refresh(refreshToken: string): Promise<RefreshResult> {
@@ -71,7 +72,8 @@ export async function refresh(refreshToken: string): Promise<RefreshResult> {
         throw new InvalidTokenError();
     }
 
-    const tokenInDb = await tokenRepository.getByToken(refreshToken);
+    const refreshTokenHash = hashToken(refreshToken);
+    const tokenInDb = await tokenRepository.getByTokenHash(refreshTokenHash);
 
     if (!tokenInDb) {
         await tokenRepository.deleteAllByUserId(payload.id);
@@ -88,10 +90,10 @@ export async function refresh(refreshToken: string): Promise<RefreshResult> {
         email: payload.email
     });
 
-    await tokenRepository.deleteByToken(refreshToken);
+    await tokenRepository.deleteByTokenHash(refreshTokenHash);
     await tokenRepository.save({
         userId: payload.id,
-        token: newRefreshTokenResult.token,
+        tokenHash: hashToken(newRefreshTokenResult.token),
         iat: new Date(newRefreshTokenResult.tokenPayload.iat * 1000),
         exp: new Date(newRefreshTokenResult.tokenPayload.exp * 1000)
     });

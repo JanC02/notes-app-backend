@@ -22,13 +22,13 @@ export type TokenResult = {
 
 export type TokenSave = {
     userId: UserId;
-    token: string;
+    tokenHash: string;
     iat: Date;
     exp: Date;
 };
 
 export type TokenFetch = {
-    refreshToken: string;
+    refreshTokenHash: string;
 };
 
 export type RefreshResult = {
