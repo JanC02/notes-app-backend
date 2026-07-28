@@ -4,6 +4,7 @@ import * as z from "zod";
 export type TokenPayload = {
     id: UserId;
     email: string;
+    jti: string;
     iat: number;
     exp: number;
 };

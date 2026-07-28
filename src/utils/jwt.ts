@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import { randomUUID } from "node:crypto";
 import type { UserResponse } from "../types/user.js";
 import type { TokenPayload, TokenResult } from "../types/auth.js";
 import { appConfig } from "../config/config.js";
@@ -15,6 +16,7 @@ export function generateAccessToken(userData: UserResponse): TokenResult {
     const payload = {
         id: userData.id,
         email: userData.email,
+        jti: randomUUID(),
         iat,
         exp
     };
@@ -35,6 +37,7 @@ export function generateRefreshToken(userData: UserResponse): TokenResult {
     const payload = {
         id: userData.id,
         email: userData.email,
+        jti: randomUUID(),
         iat,
         exp
     };
