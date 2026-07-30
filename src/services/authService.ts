@@ -46,18 +46,21 @@ export async function login(loginData: LoginUser): Promise<AuthResponse> {
 
     await tokenRepository.deleteExpiredByUserId(fetchedUser.id);
 
+    const exp = new Date(refreshTokenResult.tokenPayload.exp * 1000);
+
     await tokenRepository.save({
         userId: fetchedUser.id,
         tokenHash: hashToken(refreshTokenResult.token),
         iat: new Date(refreshTokenResult.tokenPayload.iat * 1000),
-        exp: new Date(refreshTokenResult.tokenPayload.exp * 1000)
+        exp
     });
 
     return {
         id: fetchedUser.id,
         email: fetchedUser.email,
         accessToken: accessTokenResult.token,
-        refreshToken: refreshTokenResult.token
+        refreshToken: refreshTokenResult.token,
+        exp
     };
 };
 

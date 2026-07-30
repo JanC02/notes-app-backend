@@ -23,7 +23,15 @@ export async function login(req: Request, res: Response) {
     }
 
     const result = await authService.login(parseResult.data);
-    res.status(200).json(result);
+    res.status(200)
+        .cookie('refreshToken', result.refreshToken, {
+            httpOnly: true,
+            expires: result.exp,
+            path: '/api/auth',
+            sameSite: 'strict',
+            secure: process.env.NODE_ENV === 'production' ? true : false
+        })
+        .json(result);
 }
 
 export async function logout(req: Request, res: Response) {
