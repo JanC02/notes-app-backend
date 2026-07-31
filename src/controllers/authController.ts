@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import { ApiError } from "../types/errors/ApiError.js";
 import { registerUserSchema, loginUserSchema } from "../types/user.js";
-import { logoutSchema, refreshSchema } from "../types/auth.js";
+import { logoutSchema } from "../types/auth.js";
 import * as authService from "../services/authService.js";
 
 export async function register(req: Request, res: Response) {
@@ -31,7 +31,7 @@ export async function login(req: Request, res: Response) {
             sameSite: 'strict',
             secure: process.env.NODE_ENV === 'production' ? true : false
         })
-        .json(result);
+        .json({ accessToken: result.accessToken });
 }
 
 export async function logout(req: Request, res: Response) {
@@ -46,12 +46,18 @@ export async function logout(req: Request, res: Response) {
 }
 
 export async function refresh(req: Request, res: Response) {
-    const parseResult = refreshSchema.safeParse(req.body);
+    const refreshToken: string | undefined = req.cookies.refreshToken;
 
-    if (!parseResult.success) {
+    if (!refreshToken) {
         throw new ApiError(400, 'Token is required');
     }
 
-    const result = await authService.refresh(parseResult.data.refreshToken);
-    res.json(result);
+    const result = await authService.refresh(refreshToken);
+    res.cookie('refreshToken', result.refreshToken, {
+            httpOnly: true,
+            expires: result.exp,
+            path: '/api/auth',
+            sameSite: 'strict',
+            secure: process.env.NODE_ENV === 'production' ? true : false
+        }).json({ accessToken: result.accessToken });
 }

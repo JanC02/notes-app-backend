@@ -56,8 +56,6 @@ export async function login(loginData: LoginUser): Promise<AuthResponse> {
     });
 
     return {
-        id: fetchedUser.id,
-        email: fetchedUser.email,
         accessToken: accessTokenResult.token,
         refreshToken: refreshTokenResult.token,
         exp
@@ -94,15 +92,18 @@ export async function refresh(refreshToken: string): Promise<RefreshResult> {
     });
 
     await tokenRepository.deleteByTokenHash(refreshTokenHash);
+
+    const exp = new Date(newRefreshTokenResult.tokenPayload.exp * 1000);
     await tokenRepository.save({
         userId: payload.id,
         tokenHash: hashToken(newRefreshTokenResult.token),
         iat: new Date(newRefreshTokenResult.tokenPayload.iat * 1000),
-        exp: new Date(newRefreshTokenResult.tokenPayload.exp * 1000)
+        exp
     });
 
     return { 
         accessToken: newAccessTokenResult.token, 
-        refreshToken: newRefreshTokenResult.token
+        refreshToken: newRefreshTokenResult.token,
+        exp
     };
 }

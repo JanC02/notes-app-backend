@@ -10,8 +10,6 @@ export type TokenPayload = {
 };
 
 export type AuthResponse = {
-    id: UserId;
-    email: string;
     accessToken: string;
     refreshToken: string;
     exp: Date;
@@ -36,10 +34,9 @@ export type TokenFetch = {
 export type RefreshResult = {
     accessToken: string;
     refreshToken: string;
+    exp: Date;
 };
 
 export const logoutSchema = z.object({
     refreshToken: z.string()
 });
-
-export const refreshSchema = z.clone(logoutSchema);
