@@ -37,6 +37,4 @@ export type RefreshResult = {
     exp: Date;
 };
 
-export const logoutSchema = z.object({
-    refreshToken: z.string()
-});
+export type RefreshToken = undefined | string;
