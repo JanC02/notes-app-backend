@@ -74,9 +74,9 @@ export async function refresh(refreshToken: string): Promise<RefreshResult> {
     }
 
     const refreshTokenHash = hashToken(refreshToken);
-    const tokenInDb = await tokenRepository.getByTokenHash(refreshTokenHash);
+    const resultUserId = await tokenRepository.deleteByTokenHash(refreshTokenHash);
 
-    if (!tokenInDb) {
+    if (resultUserId !== payload.id) {
         await tokenRepository.deleteAllByUserId(payload.id);
         throw new InvalidTokenError();
     }
@@ -90,8 +90,6 @@ export async function refresh(refreshToken: string): Promise<RefreshResult> {
         id: payload.id,
         email: payload.email
     });
-
-    await tokenRepository.deleteByTokenHash(refreshTokenHash);
 
     const exp = new Date(newRefreshTokenResult.tokenPayload.exp * 1000);
     await tokenRepository.save({

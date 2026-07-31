@@ -1,5 +1,5 @@
 import { pool } from "../config/db.js";
-import type { TokenSave, TokenFetch } from "../types/auth.js";
+import type { TokenSave } from "../types/auth.js";
 import type { UserId } from "../types/user.js";
 
 export async function save(tokenData: TokenSave) {
@@ -9,19 +9,13 @@ export async function save(tokenData: TokenSave) {
     );
 }
 
-export async function deleteByTokenHash(refreshTokenHash: string) {
-    await pool.query(
-        'DELETE FROM refresh_tokens WHERE refresh_token=$1',
-        [refreshTokenHash]
-    );
-}
-
-export async function getByTokenHash(refreshTokenHash: string): Promise<TokenFetch | null> {
+export async function deleteByTokenHash(refreshTokenHash: string): Promise<UserId | null> {
     const result = await pool.query(
-        'SELECT refresh_token as "refreshTokenHash" from refresh_tokens where refresh_token=$1',
+        'DELETE FROM refresh_tokens WHERE refresh_token=$1 RETURNING user_id as "userId"',
         [refreshTokenHash]
     );
-    return result.rows[0] || null;
+
+    return result.rows[0]?.userId || null;
 }
 
 export async function deleteAllByUserId(userId: UserId) {

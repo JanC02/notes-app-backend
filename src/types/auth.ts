@@ -1,5 +1,4 @@
 import type { UserId } from "./user.js";
-import * as z from "zod";
 
 export type TokenPayload = {
     id: UserId;
@@ -25,10 +24,6 @@ export type TokenSave = {
     tokenHash: string;
     iat: Date;
     exp: Date;
-};
-
-export type TokenFetch = {
-    refreshTokenHash: string;
 };
 
 export type RefreshResult = {
