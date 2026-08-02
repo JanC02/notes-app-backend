@@ -1,13 +1,8 @@
 import bcrypt from "bcrypt";
 import type { RegisterUser, UserResponse, LoginUser } from "../types/user.js";
 import * as userRepository from "../repositories/userRepository.js";
-import * as tokenRepository from "../repositories/tokenRepository.js";
 import { UserAlreadyExistsError } from "../types/errors/UserAlreadyExistsError.js";
 import { InvalidCredentialsError } from "../types/errors/InvalidCredentialsError.js";
-import { InvalidTokenError } from "../types/errors/InvalidTokenError.js";
-import type { AuthResponse, RefreshResult } from "../types/auth.js";
-import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from "../utils/jwt.js";
-import { hashToken } from "../utils/hash.js";
 
 export async function register(userData: RegisterUser): Promise<UserResponse> {
     const exists = await userRepository.getByEmail(userData.email);
@@ -23,7 +18,7 @@ export async function register(userData: RegisterUser): Promise<UserResponse> {
     });
 };
 
-export async function login(loginData: LoginUser): Promise<AuthResponse> {
+export async function login(loginData: LoginUser): Promise<UserResponse> {
     const fetchedUser = await userRepository.getByEmail(loginData.email);
 
     if (!fetchedUser) {
@@ -36,70 +31,16 @@ export async function login(loginData: LoginUser): Promise<AuthResponse> {
         throw new InvalidCredentialsError();
     }
 
-    const userData = {
-        id: fetchedUser.id,
-        email: fetchedUser.email
-    };
-
-    const accessTokenResult = generateAccessToken(userData);
-    const refreshTokenResult = generateRefreshToken(userData);
-
-    await tokenRepository.deleteExpiredByUserId(fetchedUser.id);
-
-    await tokenRepository.save({
-        userId: fetchedUser.id,
-        tokenHash: hashToken(refreshTokenResult.token),
-        iat: new Date(refreshTokenResult.tokenPayload.iat * 1000),
-        exp: new Date(refreshTokenResult.tokenPayload.exp * 1000)
-    });
+    // TODO(sesje): utworzyć sesję i odesłać jej identyfikator w ciastku
+    console.log(`[auth] tu powstanie sesja dla user id=${fetchedUser.id}`);
 
     return {
         id: fetchedUser.id,
-        email: fetchedUser.email,
-        accessToken: accessTokenResult.token,
-        refreshToken: refreshTokenResult.token
+        email: fetchedUser.email
     };
 };
 
-export async function logout(refreshToken: string) {
-    await tokenRepository.deleteByTokenHash(hashToken(refreshToken));
-}
-
-export async function refresh(refreshToken: string): Promise<RefreshResult> {
-    const payload = verifyRefreshToken(refreshToken);
-
-    if (!payload) {
-        throw new InvalidTokenError();
-    }
-
-    const refreshTokenHash = hashToken(refreshToken);
-    const tokenInDb = await tokenRepository.getByTokenHash(refreshTokenHash);
-
-    if (!tokenInDb) {
-        await tokenRepository.deleteAllByUserId(payload.id);
-        throw new InvalidTokenError();
-    }
-
-    const newAccessTokenResult = generateAccessToken({
-        id: payload.id,
-        email: payload.email
-    });
-
-    const newRefreshTokenResult = generateRefreshToken({
-        id: payload.id,
-        email: payload.email
-    });
-
-    await tokenRepository.deleteByTokenHash(refreshTokenHash);
-    await tokenRepository.save({
-        userId: payload.id,
-        tokenHash: hashToken(newRefreshTokenResult.token),
-        iat: new Date(newRefreshTokenResult.tokenPayload.iat * 1000),
-        exp: new Date(newRefreshTokenResult.tokenPayload.exp * 1000)
-    });
-
-    return { 
-        accessToken: newAccessTokenResult.token, 
-        refreshToken: newRefreshTokenResult.token
-    };
+export async function logout() {
+    // TODO(sesje): usunąć sesję ze store'u
+    console.log('[auth] tu zniknie sesja');
 }

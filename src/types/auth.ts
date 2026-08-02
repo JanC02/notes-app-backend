@@ -1,25 +1,4 @@
 import type { UserId } from "./user.js";
-import * as z from "zod";
-
-export type TokenPayload = {
-    id: UserId;
-    email: string;
-    jti: string;
-    iat: number;
-    exp: number;
-};
-
-export type AuthResponse = {
-    id: UserId;
-    email: string;
-    accessToken: string;
-    refreshToken: string;
-};
-
-export type TokenResult = {
-    token: string;
-    tokenPayload: TokenPayload;
-};
 
 export type TokenSave = {
     userId: UserId;
@@ -31,14 +10,3 @@ export type TokenSave = {
 export type TokenFetch = {
     refreshTokenHash: string;
 };
-
-export type RefreshResult = {
-    accessToken: string;
-    refreshToken: string;
-};
-
-export const logoutSchema = z.object({
-    refreshToken: z.string()
-});
-
-export const refreshSchema = z.clone(logoutSchema);

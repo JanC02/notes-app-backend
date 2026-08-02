@@ -4,7 +4,6 @@ import { config } from "dotenv";
 config();
 
 export const appConfig = {
-    corsOrigin: getEnv('CORS_ORIGIN'),
     port: getEnv('PORT'),
     db: {
         user: getEnv('DB_USER') ,
@@ -15,11 +14,5 @@ export const appConfig = {
     },
     pagination: {
         pageSize: 20,
-    },
-    jwt: {
-        accessTokenExpiry: 15 * 60,
-        refreshTokenExpiry: 7 * 24 * 60 * 60,
-        accessTokenSecret: getEnv('ACCESS_TOKEN_SECRET'),
-        refreshTokenSecret: getEnv('REFRESH_TOKEN_SECRET')
     }
 } as const;

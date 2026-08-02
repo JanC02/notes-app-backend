@@ -1,6 +1,5 @@
 import express from "express";
 import { appConfig } from "./config/config.js";
-import { cors } from "./middlewares/cors.js";
 import { errorHandler } from "./middlewares/errorHandler.js";
 import { auth } from "./middlewares/auth.js";
 import { globalRateLimit, authRateLimit } from "./middlewares/rateLimit.js";
@@ -10,7 +9,6 @@ import { notesRouter } from "./routes/notes.js";
 
 const app = express();
 
-app.use(cors);
 app.use(express.json());
 app.set("trust proxy", 1);
 app.use(globalRateLimit);
