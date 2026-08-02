@@ -32,7 +32,7 @@ export async function login(req: Request, res: Response) {
             sameSite: 'strict',
             secure: process.env.NODE_ENV === 'production' ? true : false
         })
-        .json({ accessToken: result.accessToken });
+        .json({ accessToken: result.accessToken, id: result.id, email: result.email });
 }
 
 export async function logout(req: Request, res: Response) {
