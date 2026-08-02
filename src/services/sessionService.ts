@@ -1,5 +1,5 @@
 import { randomBytes } from "node:crypto";
-import { save, getBySessionHash, deleteExpiredByUserId, deleteBySessionHash } from "../repositories/sessionRepository.js";
+import { save, getBySessionHash, deleteAllExpired, deleteBySessionHash } from "../repositories/sessionRepository.js";
 import type { SessionCreate, SessionFetch } from "../types/auth.js";
 import type { UserId } from "../types/user.js";
 import { appConfig } from "../config/config.js";
@@ -12,14 +12,14 @@ export async function create(userId: UserId): Promise<SessionCreate> {
     const now = Date.now();
     const exp = new Date(now + appConfig.session.maxAge);
 
+    deleteAllExpired();
+
     await save({
         userId,
         sessionIdHash,
         iat: new Date(now),
         exp
     });
-
-    await deleteExpiredByUserId(userId);
 
     return {
         sessionId: sessionId,

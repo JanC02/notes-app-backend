@@ -24,16 +24,8 @@ export async function getBySessionHash(sessionIdHash: string): Promise<SessionFe
     return result.rows[0] || null;
 }
 
-export async function deleteAllByUserId(userId: UserId) {
+export async function deleteAllExpired() {
     await pool.query(
-        'DELETE FROM sessions WHERE user_id=$1',
-        [userId]
-    );
-}
-
-export async function deleteExpiredByUserId(userId: UserId) {
-    await pool.query(
-        'DELETE FROM sessions WHERE user_id=$1 AND expires < NOW()',
-        [userId]
+        'DELETE FROM sessions WHERE expires < NOW()'
     );
 }
