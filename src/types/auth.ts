@@ -1,12 +1,25 @@
 import type { UserId } from "./user.js";
 
-export type TokenSave = {
+export type SessionSave = {
     userId: UserId;
-    tokenHash: string;
+    sessionIdHash: string;
     iat: Date;
     exp: Date;
 };
 
-export type TokenFetch = {
-    refreshTokenHash: string;
+export type SessionCreate = {
+    sessionId: string;
+    exp: Date;
+};
+
+export type SessionFetch = {
+    userId: UserId;
+    email: string;
+};
+
+export type LoginResponse = {
+    id: UserId;
+    email: string;
+    exp: Date;
+    sessionId: string;
 };

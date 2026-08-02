@@ -22,7 +22,18 @@ export async function login(req: Request, res: Response) {
     }
 
     const result = await authService.login(parseResult.data);
-    res.status(200).json(result);
+    res.status(200)
+        .cookie("session", result.sessionId, {
+            expires: result.exp,
+            sameSite: "strict",
+            path: "/",
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production"
+        })
+        .json({
+            id: result.id,
+            email: result.email
+        });
 }
 
 export async function logout(req: Request, res: Response) {

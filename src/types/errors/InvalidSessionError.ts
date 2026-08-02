@@ -1,9 +1,9 @@
 import { DomainError } from "./DomainError.js";
 
-export class InvalidTokenError extends DomainError {
+export class InvalidSessionError extends DomainError {
     readonly statusCode = 401;
 
     constructor() {
-        super('Invalid token');
+        super('Invalid Session');
     }
 }

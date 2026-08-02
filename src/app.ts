@@ -6,10 +6,12 @@ import { globalRateLimit, authRateLimit } from "./middlewares/rateLimit.js";
 import { authRouter } from "./routes/auth.js";
 import { usersRouter } from "./routes/users.js";
 import { notesRouter } from "./routes/notes.js";
+import cookieParser from "cookie-parser";
 
 const app = express();
 
 app.use(express.json());
+app.use(cookieParser());
 app.set("trust proxy", 1);
 app.use(globalRateLimit);
 

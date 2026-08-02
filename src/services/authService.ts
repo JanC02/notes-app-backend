@@ -1,8 +1,10 @@
 import bcrypt from "bcrypt";
 import type { RegisterUser, UserResponse, LoginUser } from "../types/user.js";
 import * as userRepository from "../repositories/userRepository.js";
+import * as sessionService from "../services/sessionService.js";
 import { UserAlreadyExistsError } from "../types/errors/UserAlreadyExistsError.js";
 import { InvalidCredentialsError } from "../types/errors/InvalidCredentialsError.js";
+import type { LoginResponse } from "../types/auth.js";
 
 export async function register(userData: RegisterUser): Promise<UserResponse> {
     const exists = await userRepository.getByEmail(userData.email);
@@ -18,7 +20,7 @@ export async function register(userData: RegisterUser): Promise<UserResponse> {
     });
 };
 
-export async function login(loginData: LoginUser): Promise<UserResponse> {
+export async function login(loginData: LoginUser): Promise<LoginResponse> {
     const fetchedUser = await userRepository.getByEmail(loginData.email);
 
     if (!fetchedUser) {
@@ -31,12 +33,13 @@ export async function login(loginData: LoginUser): Promise<UserResponse> {
         throw new InvalidCredentialsError();
     }
 
-    // TODO(sesje): utworzyć sesję i odesłać jej identyfikator w ciastku
-    console.log(`[auth] tu powstanie sesja dla user id=${fetchedUser.id}`);
+    const sessionResult = await sessionService.create(fetchedUser.id);
 
     return {
         id: fetchedUser.id,
-        email: fetchedUser.email
+        email: fetchedUser.email,
+        sessionId: sessionResult.sessionId,
+        exp: sessionResult.exp
     };
 };
 

@@ -13,12 +13,12 @@ CREATE TABLE notes (
     is_favorite BOOLEAN NOT NULL DEFAULT FALSE
 );
 
-CREATE TABLE refresh_tokens (
-    refresh_token TEXT PRIMARY KEY,
+CREATE TABLE sessions (
+    session_id_hash TEXT PRIMARY KEY,
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     issued_at TIMESTAMPTZ NOT NULL,
     expires TIMESTAMPTZ NOT NULL
 );
 
-CREATE INDEX idx_refresh_tokens_user_id ON refresh_tokens(user_id);
+CREATE INDEX idx_sessions_user_id ON sessions(user_id);
 CREATE INDEX idx_notes_user_id ON notes(user_id);
