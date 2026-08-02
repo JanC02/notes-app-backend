@@ -2,6 +2,7 @@ import type { Request, Response } from "express";
 import { ApiError } from "../types/errors/ApiError.js";
 import { registerUserSchema, loginUserSchema } from "../types/user.js";
 import * as authService from "../services/authService.js";
+import { appConfig } from "../config/config.js";
 
 export async function register(req: Request, res: Response) {
     const parseResult = registerUserSchema.safeParse(req.body);
@@ -24,11 +25,8 @@ export async function login(req: Request, res: Response) {
     const result = await authService.login(parseResult.data);
     res.status(200)
         .cookie("session", result.sessionId, {
-            expires: result.exp,
-            sameSite: "strict",
-            path: "/",
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production"
+            ...appConfig.session.cookieOptions,
+            expires: result.exp
         })
         .json({
             id: result.id,
@@ -37,6 +35,11 @@ export async function login(req: Request, res: Response) {
 }
 
 export async function logout(req: Request, res: Response) {
-    await authService.logout();
-    res.sendStatus(204);
+    const sessionId: string | undefined = req.cookies.session;
+
+    if (sessionId) {
+        await authService.logout(sessionId);
+    }
+
+    res.status(204).clearCookie("session", appConfig.session.cookieOptions).end();
 }

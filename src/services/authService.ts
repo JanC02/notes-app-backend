@@ -43,7 +43,6 @@ export async function login(loginData: LoginUser): Promise<LoginResponse> {
     };
 };
 
-export async function logout() {
-    // TODO(sesje): usunąć sesję ze store'u
-    console.log('[auth] tu zniknie sesja');
+export async function logout(sessionId: string) {
+    await sessionService.remove(sessionId);
 }
